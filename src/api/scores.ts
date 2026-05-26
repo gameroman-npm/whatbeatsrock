@@ -1,10 +1,9 @@
-import {
-  defineApiRoute,
-  type ApiRoute,
-  type Params,
-  type Payload,
-} from "#lib/api-route";
-import type { StringUserHandle, StringUserInitials } from "#types/shared";
+import { defineApiRoute, type ApiRoute } from "#lib/api-route";
+import type {
+  StringUserHandle,
+  StringUserInitials,
+  StringUUID,
+} from "#types/shared";
 
 interface LeaderboarScoreData {
   score_numeric: number;
@@ -28,10 +27,22 @@ interface UserScore {
 
 export const getUserScores: ApiRoute<
   UserScore,
-  Params,
-  Payload,
+  never,
+  never,
   { userId: string }
-> = defineApiRoute<UserScore, Params, Payload, { userId: string }>({
-  path: ({ userId }) => `/trophies/${userId}`,
+> = defineApiRoute<UserScore, never, never, { userId: string }>({
+  path: ({ userId }) => `/scores/${userId}`,
   method: "GET",
 });
+
+type SaveScorePayload = {
+  score: number;
+  text: string;
+  gid: StringUUID;
+};
+
+export const saveScore: ApiRoute<{ success: true }, never, SaveScorePayload> =
+  defineApiRoute<{ success: true }, never, SaveScorePayload>({
+    path: "/scores",
+    method: "POST",
+  });

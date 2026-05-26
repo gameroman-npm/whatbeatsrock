@@ -1,9 +1,4 @@
-import {
-  defineApiRoute,
-  type ApiRoute,
-  type Params,
-  type Payload,
-} from "#lib/api-route";
+import { defineApiRoute, type ApiRoute } from "#lib/api-route";
 import type { StringUserHandle, StringUUID } from "#types/shared";
 
 import type { CustomGameAttributeData } from "./custom";
@@ -20,16 +15,16 @@ interface UserProfileData extends UserInfoData {
 
 export const getUserProfile: ApiRoute<
   UserProfileData,
-  Params,
-  Payload,
+  never,
+  never,
   { userId: string }
-> = defineApiRoute<UserProfileData, Params, Payload, { userId: string }>({
+> = defineApiRoute<UserProfileData, never, never, { userId: string }>({
   path: ({ userId }) => `/users/${userId}/profile`,
   method: "GET",
 });
 
-export const getUserInfo: ApiRoute<UserInfoData, { handle: string }, Payload> =
-  defineApiRoute<UserInfoData, { handle: string }, Payload>({
+export const getUserInfo: ApiRoute<UserInfoData, { handle: string }> =
+  defineApiRoute<UserInfoData, { handle: string }>({
     path: "/users",
     method: "GET",
   });
@@ -44,10 +39,10 @@ interface UserCustomGame {
 
 export const getUserCustomGame: ApiRoute<
   UserCustomGame,
-  Params,
-  Payload,
+  never,
+  never,
   { userId: string }
-> = defineApiRoute<UserCustomGame, Params, Payload, { userId: string }>({
+> = defineApiRoute<UserCustomGame, never, never, { userId: string }>({
   path: ({ userId }) => `/users/${userId}/custom`,
   method: "GET",
 });

@@ -1,9 +1,4 @@
-import {
-  defineApiRoute,
-  type ApiRoute,
-  type Params,
-  type Payload,
-} from "#lib/api-route";
+import { defineApiRoute, type ApiRoute } from "#lib/api-route";
 import type { StringEmoji } from "#types/shared";
 
 interface UserGuess {
@@ -18,10 +13,10 @@ interface UserTrophy {
 
 export const getUserTrophies: ApiRoute<
   UserTrophy[],
-  Params,
-  Payload,
+  never,
+  never,
   { userId: string }
-> = defineApiRoute<UserTrophy[], Params, Payload, { userId: string }>({
+> = defineApiRoute<UserTrophy[], never, never, { userId: string }>({
   path: ({ userId }) => `/trophies/${userId}`,
   method: "GET",
 });

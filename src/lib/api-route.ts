@@ -19,23 +19,35 @@ function buildUrl(path: string, params?: Params): URL {
   return url;
 }
 
+type HTTPMethod = "GET" | "POST" | "PUT" | "DELETE";
+
 interface RouteConfig<
-  TMethod extends "GET" | "POST",
+  TMethod extends HTTPMethod,
   TPathObj extends Record<string, unknown> = {},
 > {
   path: string | ((args: TPathObj) => string);
   method: TMethod;
 }
 
+type HasRequiredKeys<T> = [T] extends [never]
+  ? false
+  : [T] extends [undefined]
+    ? false
+    : {} extends T
+      ? false
+      : true;
+
 export type Payload = Record<string, unknown>;
 
-export interface RequestOptionsBase<
+export type RequestOptionsBase<
   TParams extends Params = Params,
   TPayload extends Payload = Payload,
-> {
-  params?: TParams;
-  payload?: TPayload;
-}
+> = (HasRequiredKeys<TParams> extends true
+  ? { params: TParams }
+  : { params?: TParams }) &
+  (HasRequiredKeys<TPayload> extends true
+    ? { payload: TPayload }
+    : { payload?: TPayload });
 
 export type RequestOptions<
   TParams extends Params = Params,
@@ -43,9 +55,9 @@ export type RequestOptions<
   TPathObj extends Record<string, unknown> = {},
 > = RequestOptionsBase<TParams, TPayload> & TPathObj;
 
-type ResponseData<TResponse> = { data: TResponse };
-
-type HasRequiredKeys<T> = {} extends T ? false : true;
+type ResponseData<T> = T extends { error: string } | { success: boolean }
+  ? T
+  : { data: T };
 
 type IsOptionsRequired<
   TParams extends Params,
@@ -79,7 +91,7 @@ export function defineApiRoute<
   TParams extends Params = Params,
   TPayload extends Payload = Payload,
   TPathObj extends Record<string, unknown> = {},
-  TMethod extends "GET" | "POST" = "GET" | "POST",
+  TMethod extends HTTPMethod = HTTPMethod,
 >(
   config: RouteConfig<TMethod, TPathObj>,
 ): ApiRoute<TResponse, TParams, TPayload, TPathObj> {
