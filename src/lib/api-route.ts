@@ -55,10 +55,6 @@ export type RequestOptions<
   TPathObj extends Record<string, unknown> = {},
 > = RequestOptionsBase<TParams, TPayload> & TPathObj;
 
-type ResponseData<T> = T extends { error: string } | { success: boolean }
-  ? T
-  : { data: T };
-
 type IsOptionsRequired<
   TParams extends Params,
   TPayload extends Payload,
@@ -72,6 +68,25 @@ type IsOptionsRequired<
         ? true
         : false;
 
+type ExtractSuccess<T> = T extends { error: unknown } ? never : T;
+type ExtractError<T> = T extends { error: unknown } ? T : never;
+
+export type ApiSuccess<T> = {
+  ok: true;
+  status: number;
+  data: ExtractSuccess<T>;
+};
+
+export type ApiError<T> = {
+  ok: false;
+  status: number;
+  data: ExtractError<T>;
+};
+
+export type ApiResponse<T> = [ExtractError<T>] extends [never]
+  ? ApiSuccess<T> | { ok: never; status: never; data: never }
+  : ApiSuccess<T> | ApiError<T>;
+
 export type ApiRoute<
   TResponse,
   TParams extends Params = Params,
@@ -81,10 +96,10 @@ export type ApiRoute<
   IsOptionsRequired<TParams, TPayload, TPathObj> extends true
     ? (
         options: RequestOptions<TParams, TPayload, TPathObj>,
-      ) => Promise<ResponseData<TResponse>>
+      ) => Promise<ApiResponse<TResponse>>
     : (
         options?: RequestOptions<TParams, TPayload, TPathObj>,
-      ) => Promise<ResponseData<TResponse>>;
+      ) => Promise<ApiResponse<TResponse>>;
 
 export function defineApiRoute<
   TResponse,
@@ -96,7 +111,7 @@ export function defineApiRoute<
   config: RouteConfig<TMethod, TPathObj>,
 ): ApiRoute<TResponse, TParams, TPayload, TPathObj> {
   // oxlint-disable-next-line no-explicit-any
-  return async (options?: any): Promise<ResponseData<TResponse>> => {
+  return async (options?: any): Promise<ApiResponse<TResponse>> => {
     const opts = options ?? {};
     const resolvedPath =
       typeof config.path === "function" ? config.path(opts) : config.path;
@@ -111,9 +126,15 @@ export function defineApiRoute<
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      return {
+        ok: false,
+        status: response.status,
+        data: errorData,
+      } as ApiResponse<TResponse>;
     }
 
-    return response.json() as Promise<ResponseData<TResponse>>;
+    const data = await response.json();
+    return { ok: true, status: response.status, data: data };
   };
 }
