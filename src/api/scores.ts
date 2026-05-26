@@ -5,10 +5,8 @@ import type {
   StringUUID,
 } from "#types/shared";
 
-interface LeaderboarScoreData {
-  score_numeric: number;
+interface LeaderboarScoreData extends UserScore {
   arcade_initials: StringUserHandle | StringUserInitials;
-  score_text: string;
   user: null | { handle: StringUserHandle };
 }
 
