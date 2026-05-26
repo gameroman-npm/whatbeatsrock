@@ -29,7 +29,7 @@ type FightPayloadCustom = { prev: string; guess: string; oid: StringUUID };
 type FightPayloadDefault = { prev: string; guess: string; gid: StringUUID };
 type FightPayload = FightPayloadCustom | FightPayloadDefault;
 
-export const fight: ApiRoute<FightResponseData, never, FightPayload> =
+export const submitGuess: ApiRoute<FightResponseData, never, FightPayload> =
   defineApiRoute<FightResponseData, never, FightPayload>({
     path: "/vs",
     method: "POST",

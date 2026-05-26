@@ -1,5 +1,5 @@
 import { defineApiRoute, type ApiRoute } from "#lib/api-route";
-import type { StringEmoji } from "#types/shared";
+import type { StringEmoji, StringUUID, SuccessResponse } from "#types/shared";
 
 interface MyCustomGamePrivateAttributeData {
   prev1: string;
@@ -37,3 +37,44 @@ interface MyCustomGameData {
 
 export const getMyCustomGame: ApiRoute<MyCustomGameData> =
   defineApiRoute<MyCustomGameData>({ path: "/me/custom", method: "GET" });
+
+type MyCustomGamePayload = Omit<
+  MyCustomGameAttributeData & { gameTitle: string },
+  "title"
+>;
+
+export const saveMyCustomGame: ApiRoute<
+  SuccessResponse,
+  never,
+  MyCustomGamePayload
+> = defineApiRoute<SuccessResponse, never, MyCustomGamePayload>({
+  path: "/me/custom",
+  method: "POST",
+});
+
+type LikeCustomGamePayload = {
+  fid: StringUUID;
+  is_upvote: true;
+};
+
+export const likeCustomGame: ApiRoute<
+  SuccessResponse,
+  never,
+  LikeCustomGamePayload
+> = defineApiRoute<SuccessResponse, never, LikeCustomGamePayload>({
+  path: "/me/custom/like",
+  method: "PUT",
+});
+
+type UnikeCustomGamePayload = {
+  fid: StringUUID;
+};
+
+export const unlikeCustomGame: ApiRoute<
+  SuccessResponse,
+  never,
+  UnikeCustomGamePayload
+> = defineApiRoute<SuccessResponse, never, UnikeCustomGamePayload>({
+  path: "/me/custom/like",
+  method: "DELETE",
+});
