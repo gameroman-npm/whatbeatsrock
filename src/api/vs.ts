@@ -17,7 +17,7 @@ interface FightUncached {
   cache_count: null;
 }
 
-type FightErrorMessage = "negative aura";
+type FightErrorMessage = "negative aura" | "RATE_LIMIT_EXCEEDED";
 
 interface FightError {
   error: FightErrorMessage;
