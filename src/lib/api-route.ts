@@ -3,7 +3,7 @@ export type Params = Record<
   string | number | boolean | null | undefined
 >;
 
-const API_URL = "https://www.whatbeatsrock.coma/api";
+const API_URL = "https://www.whatbeatsrock.com/api";
 
 function buildUrl(path: string, params?: Params): URL {
   const url = new URL(`${API_URL}${path}`);
