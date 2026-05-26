@@ -23,7 +23,8 @@ interface FightError {
   error: FightErrorMessage;
 }
 
-type FightResponseData = FightCached | FightUncached | FightError;
+export type FightResult = FightCached | FightUncached;
+type FightResponseData = FightResult | FightError;
 
 type FightPayloadCustom = { prev: string; guess: string; oid: StringUUID };
 type FightPayloadDefault = { prev: string; guess: string; gid: StringUUID };
