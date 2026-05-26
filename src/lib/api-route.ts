@@ -68,23 +68,23 @@ type IsOptionsRequired<
         ? true
         : false;
 
-type ExtractSuccess<T> = T extends { error: unknown } ? never : T;
+type ResponseData<T> = T extends { success: boolean } ? T : { data: T };
+
+type ExtractSuccess<T> = T extends { error: unknown } ? never : ResponseData<T>;
 type ExtractError<T> = T extends { error: unknown } ? T : never;
 
 export type ApiSuccess<T> = {
   ok: true;
   status: number;
-  data: ExtractSuccess<T>;
-};
+} & ExtractSuccess<T>;
 
 export type ApiError<T> = {
   ok: false;
   status: number;
-  data: ExtractError<T>;
-};
+} & ExtractError<T>;
 
 export type ApiResponse<T> = [ExtractError<T>] extends [never]
-  ? ApiSuccess<T> | { ok: never; status: never; data: never }
+  ? ApiSuccess<T>
   : ApiSuccess<T> | ApiError<T>;
 
 export type ApiRoute<
@@ -127,14 +127,10 @@ export function defineApiRoute<
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      return {
-        ok: false,
-        status: response.status,
-        data: errorData,
-      } as ApiResponse<TResponse>;
+      return { ok: false, status: response.status, ...errorData };
     }
 
     const data = await response.json();
-    return { ok: true, status: response.status, data: data };
+    return { ok: true, status: response.status, ...data };
   };
 }
