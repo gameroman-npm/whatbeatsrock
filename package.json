@@ -11,6 +11,11 @@
     "dist"
   ],
   "type": "module",
+  "imports": {
+    "#lib/*": "./src/lib/*.ts",
+    "#api/*": "./src/api/*.ts",
+    "#types/*": "./src/types/*.ts"
+  },
   "exports": {
     ".": "./dist/index.mjs",
     "./package.json": "./package.json"
