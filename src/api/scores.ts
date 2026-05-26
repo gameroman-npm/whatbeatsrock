@@ -44,11 +44,10 @@ interface SaveScoreError {
   error: "where what?";
 }
 
-export const saveScore: ApiRoute<
-  SuccessResponse | SaveScoreError,
-  never,
-  SaveScorePayload
-> = defineApiRoute<SuccessResponse | SaveScoreError, never, SaveScorePayload>({
-  path: "/scores",
-  method: "POST",
-});
+type SaveScoreResponse = SuccessResponse | SaveScoreError;
+
+export const saveScore: ApiRoute<SaveScoreResponse, never, SaveScorePayload> =
+  defineApiRoute<SaveScoreResponse, never, SaveScorePayload>({
+    path: "/scores",
+    method: "POST",
+  });
