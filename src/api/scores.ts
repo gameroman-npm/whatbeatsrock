@@ -3,6 +3,7 @@ import type {
   StringUserHandle,
   StringUserInitials,
   StringUUID,
+  SuccessResponse,
 } from "#types/shared";
 
 interface LeaderboarScoreData extends UserScore {
@@ -39,8 +40,15 @@ type SaveScorePayload = {
   gid: StringUUID;
 };
 
-export const saveScore: ApiRoute<{ success: true }, never, SaveScorePayload> =
-  defineApiRoute<{ success: true }, never, SaveScorePayload>({
-    path: "/scores",
-    method: "POST",
-  });
+interface SaveScoreError {
+  error: "where what?";
+}
+
+export const saveScore: ApiRoute<
+  SuccessResponse | SaveScoreError,
+  never,
+  SaveScorePayload
+> = defineApiRoute<SuccessResponse | SaveScoreError, never, SaveScorePayload>({
+  path: "/scores",
+  method: "POST",
+});
