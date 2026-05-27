@@ -17,11 +17,25 @@ interface FightUncached {
   cache_count: null;
 }
 
-type FightErrorMessage = "negative aura" | "RATE_LIMIT_EXCEEDED";
-
-interface FightError {
-  error: FightErrorMessage;
+interface FightBadGuessError {
+  error: "negative aura";
+  status: 422;
 }
+
+interface FightRatelimitError {
+  error: "RATE_LIMIT_EXCEEDED";
+  status: 418;
+}
+
+interface FightRepeatedAnswerError {
+  error: "give (hint: you already used this answer)";
+  status: 400;
+}
+
+type FightError =
+  | FightBadGuessError
+  | FightRatelimitError
+  | FightRepeatedAnswerError;
 
 export type FightResult = FightCached | FightUncached;
 type FightResponseData = FightResult | FightError;
