@@ -101,6 +101,7 @@ export type ApiRoute<
         options?: RequestOptions<TParams, TPayload, TPathObj>,
       ) => Promise<ApiResponse<TResponse>>;
 
+/* @__NO_SIDE_EFFECTS__ */
 export function defineApiRoute<
   TResponse,
   TParams extends Params = Params,
